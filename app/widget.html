@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RingCentral</title>
+  <script src="https://live.zwidgets.com/js-sdk/1.0.5/ZohoEmbededAppSDK.min.js"></script>
+</head>
+
+<style>
+  #bg {
+    background-color: rgb(233, 227, 220);
+    border: 2px solid rgb(241, 218, 187);
+    border-radius: 1em;
+    width: 40em;
+    height: 35em;
+
+  }
+
+  .flex-container>div {
+    background-color: rgb(88, 86, 86);
+    width: 100px;
+    margin: 10px;
+    text-align: center;
+    line-height: 50px;
+    font-size: 30px;
+    box-shadow: 4px 4px #888888;
+  }
+
+  .flex-container #nav {
+    width: 10em;
+    height: 1.75em;
+    border-radius: 1em;
+    display: inline-block;
+  }
+
+  img {
+    width: 55%;
+    height: auto;
+    border-radius: 0.4em;
+
+  }
+
+  #welcome {
+    margin-left: 9em;
+    width: 9em;
+    height: 1.66em;
+    border-radius: 1em;
+    padding: 0px;
+  }
+
+  #G {
+    /* border:2px solid red; */
+    font-size: 0.66em;
+    position: relative;
+    margin-top: -100px;
+    color: whitesmoke;
+    padding-top: 100px;
+
+  }
+
+  #record {
+    margin-left: 11em;
+    width: 6em;
+    height: 8em;
+    border-radius: 1em;
+
+  }
+
+  table {
+    font-size: 0.66em;
+    color: white;
+    background-color: rgb(66, 65, 65);
+    border-radius: 1em;
+    margin: 1em;
+
+    /* border:2px solid red; */
+  }
+
+  #inrecord {
+    font-size: 0.4em;
+    text-align: left;
+    margin: 10px;
+    color: white;
+    /* text-shadow: sandybrown; */
+
+  }
+
+  #inputmsg {
+    border-radius: 1em;
+    width: 9em;
+    height: 9em;
+    margin-top: -9em;
+  }
+
+  #textbox {
+    font-size: 0.6em;
+    color: white;
+    text-align: left;
+    padding: 10px;
+  }
+
+  #sms {
+    border-radius: 1em;
+    border-style: none;
+    box-shadow: 3px 2px grey;
+    /* font-family: Georgia, 'Times New Roman', Times, serif; */
+  }
+
+  #btm {
+    border-radius: 1em;
+    width: 12em;
+    height: 1em;
+  }
+
+  input {
+    display: block;
+    width: 20em;
+    /* margin-right: 200px;  */
+    padding: 0.33em;
+    margin-left: 2em;
+    border-radius: 10px;
+    border-style: none;
+    color: white;
+    background-color: rgb(58, 55, 55);
+    /* background-color: rgb(72, 136, 233); */
+    /*  */
+  }
+
+  input:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  }
+
+  input:active {
+    background-color: rgb(0, 3, 3);
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+  }
+
+  #myText {
+    display: inline-block;
+    margin: 5px;
+    width: 17em;
+    height: 10em;
+  }
+</style>
+
+<body>
+  <div id="bg">
+    <div class="flex-container">
+      <div id="nav">
+        <img src="logo.png" alt="Error loading">
+      </div>
+      <div id="welcome">
+        <span id="G">Welcome !</span>
+      </div>
+      <div id="record">
+        <table>
+          <tr>
+            <td>Record Details:</td>
+            <td id="json"></td>
+          </tr>
+
+        </table>
+        <p id="inrecord">
+          <span id="name">Name:</span>
+          <br>
+          <span id="phone">Phone:
+            <span id="inphone"> </span>
+          </span>
+        </p>
+      </div>
+      <div id="inputmsg">
+        <p id="textbox">
+          Enter Your Text :
+          <input type="text" id="myText" value="Some text...">
+        </p>
+
+      </div>
+      <div id="btm">
+        <p id="demo">
+          <input type="submit" onclick="myFunction()" value="Send SMS">
+        </p>
+      </div>
+
+
+    </div>
+  </div>
+  <script>
+    function initializeWidget() {
+      ZOHO.embeddedApp.on("PageLoad", function (data) {
+        if (data && data.Entity) {
+          ZOHO.CRM.API.getRecord({ Entity: data.Entity, RecordID: data.EntityId })
+            .then(function (response) {
+              var jsondata = response;
+              var name = "Name: " + jsondata.data[0].Full_Name;
+              var namearray = name.split(' ');
+              let json = JSON.stringify(response, null, 2);
+              let phone = jsondata.data[0].Phone;
+              
+
+              document.getElementById("name").innerHTML = name;
+              document.getElementById("inphone").innerHTML = phone;
+
+
+
+            }
+            );
+          ZOHO.CRM.CONFIG.getCurrentUser().then(function (data) {
+            console.log(data);
+            //document.getElementById("G")=JSON.stringify(data, null, 2);
+            let user="Welcome "+data.users[0].first_name+" !";
+            console.log(user);
+            document.getElementById("G").innerHTML=user;
+
+          });
+
+
+        }
+
+      }
+      );
+
+      ZOHO.embeddedApp.init();
+    }
+    initializeWidget();
+    function myFunction() {
+      console.log("inside creation");
+      var sms = document.getElementById("myText").value;
+      console.log(sms);
+      var recordData = {
+        "SMS_Content": sms,
+        "Name": document.getElementById("name").innerHTML + "SMS",
+        "Phone":document.getElementById("inphone").innerText
+      }
+      ZOHO.CRM.API.insertRecord({ Entity: "RingCentralSMS", APIData: recordData, Trigger: ["workflow"] }).then(function (data) {
+        console.log(data);
+        //let outp=console.log(data);
+        let status = JSON.stringify(data, null, 2);
+
+        console.log("status" + status);
+        //y=status.data[0].status;
+        //var code=outp.data[0].status;
+        alert("Success");
+        console.log("success");
+
+
+      });
+
+    }
+
+  </script>
+</body>
+
+</html>
